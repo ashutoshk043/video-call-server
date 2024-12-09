@@ -13,7 +13,7 @@ app.use(express.static('public'));
 // Handle WebSocket connections
 wss.on('connection', (ws) => {
     clients.push(ws);
-    console.log(`New client connected. Total clients: ${clients.length}`);
+    console.log(`New client connected m. Total clients: ${clients.length}`);
 
     ws.on('message', (message) => {
         // Broadcast messages to all clients except the sender
