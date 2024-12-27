@@ -16,10 +16,11 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
-
+  console.log('Socket Open ?', socket.connected);
   // Broadcast messages
-  socket.on('sendMessage', (data) => {
-    io.emit('receiveMessage', data);
+  socket.on('message', (data) => {
+    console.log('Message:', data);
+    io.emit('message', data);
   });
 
   socket.on('disconnect', () => {
@@ -28,4 +29,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = 3000;
-server.listen(PORT, () => console.log(`Server running aaa on http://localhost:${PORT}`));
+server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
