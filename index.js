@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
   // Broadcast messages
   socket.on('message', (data) => {
     console.log('Message:', data);
-    io.emit('message', data);
+    socket.broadcast.emit('message-txfr', data);
   });
 
   socket.on('disconnect', () => {
