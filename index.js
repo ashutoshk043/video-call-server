@@ -2,31 +2,22 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-
+const { connectToDatabase } = require('./common/db');
+const { client } = require('./common/redish');
 const app = express();
 app.use(cors());
 const server = http.createServer(app);
+const { createSocketServer } = require('./common/socket');
 
-const io = new Server(server, {
-  cors: {
-    origin: 'http://localhost:4200', // Frontend URL
-    methods: ['GET', 'POST'],
-  },
-});
+// Connect to the database and Redis once when the server starts
+connectToDatabase();
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-  console.log('Socket Open ?', socket.connected);
-  // Broadcast messages
-  socket.on('message', (data) => {
-    console.log('Message:', data);
-    socket.broadcast.emit('message-txfr', data);
-  });
+client.connect().then(() => {
+  console.log('Connected to Redis');
+}).catch(err => console.error('Error connecting to Redis:', err));
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
-  });
-});
+const io = createSocketServer(server);
+
 
 const PORT = 3000;
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
