@@ -1,26 +1,20 @@
+require('dotenv').config()
 const redis = require('redis');
 
 // Create and initialize the Redis client
 const client = redis.createClient({
   host: 'localhost',
-  port: 6379,
-  password: '',  // If you have a password
-  db: 0
+  port: process.env.REDIS_PORT,
+  password: '', // Add the password if required
+  db: 0,        // Select the Redis database
 });
 
-// Handle Redis connection
-client.on('connect', () => {
-  console.log('Connected to Redis');
-});
 
-// Handle Redis error
+
+// Handle Redis events
 client.on('error', (err) => {
   console.error('Redis error:', err);
 });
 
-// Ensure the client is connected before using it
-client.connect().catch(err => {
-  console.error('Error connecting to Redis:', err);
-});
-
+// Export the Redis client without connecting
 module.exports = { client };

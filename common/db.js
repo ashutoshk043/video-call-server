@@ -1,7 +1,8 @@
+require('dotenv').config()
 const { MongoClient } = require('mongodb');
 
 // Replace with your database name
-const dbName = 'kyroscape';
+const dbName = process.env.DB_NAME;
 const url = 'mongodb://127.0.0.1:27017'; // Local MongoDB URL
 const client = new MongoClient(url);
 
