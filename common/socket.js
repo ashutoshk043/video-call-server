@@ -19,8 +19,8 @@ const updateRedisUserCount = async () => {
 const createSocketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: 'http://localhost:4200', // Frontend URL
-      methods: ['GET', 'POST'],
+      origin: process.env.SOCKET_FRONT_URL, // Frontend URL
+      methods: process.env.SOCKET_CORS_ACCEPT,
     },
   });
 
