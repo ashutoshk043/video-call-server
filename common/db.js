@@ -1,22 +1,39 @@
-require('dotenv').config()
-const { MongoClient } = require('mongodb');
+require('dotenv').config();
+const mongoose = require('mongoose');
 
-// Replace with your database name
-const dbName = process.env.DB_NAME;
-const url = 'mongodb://127.0.0.1:27017'; // Local MongoDB URL
-const client = new MongoClient(url);
+const dbURI = process.env.DB_NAME;
 
 async function connectToDatabase() {
   try {
-    // Connect to the MongoDB server
-    await client.connect();
-    console.log('Connected successfully to MongoDB');
+    // Connect to MongoDB with Mongoose
+    await mongoose.connect(dbURI);
 
-    // Return the database instance
-    return client.db(dbName);
+    console.log('Connected successfully to MongoDB with Mongoose');
+
+    // Listen for connection events
+    mongoose.connection.on('connected', () => {
+      console.log('Mongoose connection is open');
+    });
+
+    mongoose.connection.on('error', (err) => {
+      console.error(`Mongoose connection error: ${err.message}`);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      console.warn('Mongoose connection is disconnected');
+    });
+
+    // Handle graceful shutdown
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      console.log('Mongoose connection closed due to app termination');
+      process.exit(0);
+    });
+
+    return mongoose.connection;
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    throw error; // Rethrow the error to handle it where this function is called
+    console.error('Error connecting to MongoDB with Mongoose:', error.message);
+    throw error;
   }
 }
 
